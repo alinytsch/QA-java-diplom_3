@@ -4,24 +4,28 @@ import io.qameta.allure.Step;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
-import org.json.JSONObject;
+import models.CourierModel;
 
 public class UserApiHelper {
 
     private static final String BASE_URL = "https://stellarburgers.nomoreparties.site/api/auth";
 
     @Step("Создание пользователя через API")
-    public static Response register(String email, String password, String name) {
-        JSONObject body = new JSONObject();
-        body.put("email", email);
-        body.put("password", password);
-        body.put("name", name);
-
+    public static Response register(CourierModel courier) {
         return RestAssured.given()
                 .contentType(ContentType.JSON)
-                .body(body.toString())
+                .body(courier)
                 .when()
                 .post(BASE_URL + "/register");
+    }
+
+    @Step("Логин пользователя через API")
+    public static Response login(CourierModel courier) {
+        return RestAssured.given()
+                .contentType(ContentType.JSON)
+                .body(courier)
+                .when()
+                .post(BASE_URL + "/login");
     }
 
     @Step("Удаление пользователя через API")
@@ -30,18 +34,5 @@ public class UserApiHelper {
                 .header("Authorization", accessToken)
                 .when()
                 .delete(BASE_URL + "/user");
-    }
-
-    @Step("Логин пользователя через API")
-    public static Response login(String email, String password) {
-        JSONObject body = new JSONObject();
-        body.put("email", email);
-        body.put("password", password);
-
-        return RestAssured.given()
-                .contentType(ContentType.JSON)
-                .body(body.toString())
-                .when()
-                .post(BASE_URL + "/login");
     }
 }

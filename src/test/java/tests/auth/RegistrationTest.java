@@ -6,13 +6,16 @@ import models.Browsers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import pages.LoginPage;
 import pages.MainPage;
 import pages.RegisterPage;
 import tests.BaseUITest;
 
+import java.time.Duration;
+
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 
 @RunWith(Parameterized.class)
@@ -44,16 +47,21 @@ public class RegistrationTest extends BaseUITest {
         loginPage.clickRegisterLink();
 
         RegisterPage registerPage = new RegisterPage(driver);
+
         String name = UserData.randomName();
         String email = UserData.randomEmail();
-        String password = "123456";
+        String password = "123456"; // валидный пароль
 
         registerPage.enterName(name);
         registerPage.enterEmail(email);
         registerPage.enterPassword(password);
         registerPage.clickRegisterButton();
 
-        assertThat(driver.getCurrentUrl(), containsString("/login"));
+        // Ждем редирект на страницу логина
+        new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(ExpectedConditions.urlToBe("https://stellarburgers.nomoreparties.site/login"));
+
+        assertThat(driver.getCurrentUrl(), equalTo("https://stellarburgers.nomoreparties.site/login"));
     }
 
     @Test

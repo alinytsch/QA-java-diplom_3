@@ -5,16 +5,21 @@ import helpers.UserData;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.Response;
 import models.Browsers;
+import models.CourierModel;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import pages.*;
 import tests.BaseUITest;
 
+import java.time.Duration;
+
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
 
 @RunWith(Parameterized.class)
 public class LoginTest extends BaseUITest {
@@ -44,7 +49,8 @@ public class LoginTest extends BaseUITest {
         password = UserData.randomPassword();
         name = UserData.randomName();
 
-        Response response = UserApiHelper.register(email, password, name);
+        CourierModel courier = new CourierModel(email, password, name);
+        Response response = UserApiHelper.register(courier);
         accessToken = response.jsonPath().getString("accessToken");
     }
 
@@ -66,8 +72,12 @@ public class LoginTest extends BaseUITest {
         loginPage.enterPassword(password);
         loginPage.clickLoginButton();
 
-        assertThat(driver.getCurrentUrl(), containsString("/"));
+        new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(ExpectedConditions.urlToBe("https://stellarburgers.nomoreparties.site/"));
+
+        assertThat(driver.getCurrentUrl(), equalTo("https://stellarburgers.nomoreparties.site/"));
     }
+
 
     @Test
     @DisplayName("Вход через кнопку 'Личный кабинет'")
@@ -80,7 +90,10 @@ public class LoginTest extends BaseUITest {
         loginPage.enterPassword(password);
         loginPage.clickLoginButton();
 
-        assertThat(driver.getCurrentUrl(), containsString("/"));
+        new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(ExpectedConditions.urlToBe("https://stellarburgers.nomoreparties.site/"));
+
+        assertThat(driver.getCurrentUrl(), equalTo("https://stellarburgers.nomoreparties.site/"));
     }
 
     @Test
@@ -99,7 +112,10 @@ public class LoginTest extends BaseUITest {
         loginPage.enterPassword(password);
         loginPage.clickLoginButton();
 
-        assertThat(driver.getCurrentUrl(), containsString("/"));
+        new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(ExpectedConditions.urlToBe("https://stellarburgers.nomoreparties.site/"));
+
+        assertThat(driver.getCurrentUrl(), equalTo("https://stellarburgers.nomoreparties.site/"));
     }
 
     @Test
@@ -118,6 +134,9 @@ public class LoginTest extends BaseUITest {
         loginPage.enterPassword(password);
         loginPage.clickLoginButton();
 
-        assertThat(driver.getCurrentUrl(), containsString("/"));
+        new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(ExpectedConditions.urlToBe("https://stellarburgers.nomoreparties.site/"));
+
+        assertThat(driver.getCurrentUrl(), equalTo("https://stellarburgers.nomoreparties.site/"));
     }
 }
