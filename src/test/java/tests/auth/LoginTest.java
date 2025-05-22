@@ -1,5 +1,6 @@
 package tests.auth;
 
+import helpers.Endpoints;
 import helpers.UserApiHelper;
 import helpers.UserData;
 import io.qameta.allure.junit4.DisplayName;
@@ -11,12 +12,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import pages.*;
 import tests.BaseUITest;
-
-import java.time.Duration;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -28,6 +25,8 @@ public class LoginTest extends BaseUITest {
     private String password;
     private String name;
     private String accessToken;
+
+    private static final String MAIN_PAGE_URL = Endpoints.BASE_URL;
 
     public LoginTest(String browser) {
         this.browser = browser;
@@ -68,16 +67,11 @@ public class LoginTest extends BaseUITest {
         mainPage.clickLoginButton();
 
         LoginPage loginPage = new LoginPage(driver);
-        loginPage.enterEmail(email);
-        loginPage.enterPassword(password);
-        loginPage.clickLoginButton();
+        loginPage.login(email, password);
 
-        new WebDriverWait(driver, Duration.ofSeconds(5))
-                .until(ExpectedConditions.urlToBe("https://stellarburgers.nomoreparties.site/"));
-
-        assertThat(driver.getCurrentUrl(), equalTo("https://stellarburgers.nomoreparties.site/"));
+        loginPage.waitUntilRedirectToMain();
+        assertThat(driver.getCurrentUrl(), equalTo(MAIN_PAGE_URL));
     }
-
 
     @Test
     @DisplayName("Вход через кнопку 'Личный кабинет'")
@@ -86,14 +80,10 @@ public class LoginTest extends BaseUITest {
         mainPage.clickPersonalAccount();
 
         LoginPage loginPage = new LoginPage(driver);
-        loginPage.enterEmail(email);
-        loginPage.enterPassword(password);
-        loginPage.clickLoginButton();
+        loginPage.login(email, password);
 
-        new WebDriverWait(driver, Duration.ofSeconds(5))
-                .until(ExpectedConditions.urlToBe("https://stellarburgers.nomoreparties.site/"));
-
-        assertThat(driver.getCurrentUrl(), equalTo("https://stellarburgers.nomoreparties.site/"));
+        loginPage.waitUntilRedirectToMain();
+        assertThat(driver.getCurrentUrl(), equalTo(MAIN_PAGE_URL));
     }
 
     @Test
@@ -108,14 +98,10 @@ public class LoginTest extends BaseUITest {
         RegisterPage registerPage = new RegisterPage(driver);
         registerPage.clickLoginLink();
 
-        loginPage.enterEmail(email);
-        loginPage.enterPassword(password);
-        loginPage.clickLoginButton();
+        loginPage.login(email, password);
 
-        new WebDriverWait(driver, Duration.ofSeconds(5))
-                .until(ExpectedConditions.urlToBe("https://stellarburgers.nomoreparties.site/"));
-
-        assertThat(driver.getCurrentUrl(), equalTo("https://stellarburgers.nomoreparties.site/"));
+        loginPage.waitUntilRedirectToMain();
+        assertThat(driver.getCurrentUrl(), equalTo(MAIN_PAGE_URL));
     }
 
     @Test
@@ -130,13 +116,9 @@ public class LoginTest extends BaseUITest {
         ForgotPasswordPage forgotPage = new ForgotPasswordPage(driver);
         forgotPage.clickLoginLink();
 
-        loginPage.enterEmail(email);
-        loginPage.enterPassword(password);
-        loginPage.clickLoginButton();
+        loginPage.login(email, password);
 
-        new WebDriverWait(driver, Duration.ofSeconds(5))
-                .until(ExpectedConditions.urlToBe("https://stellarburgers.nomoreparties.site/"));
-
-        assertThat(driver.getCurrentUrl(), equalTo("https://stellarburgers.nomoreparties.site/"));
+        loginPage.waitUntilRedirectToMain();
+        assertThat(driver.getCurrentUrl(), equalTo(MAIN_PAGE_URL));
     }
 }

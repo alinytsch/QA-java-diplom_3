@@ -1,18 +1,19 @@
-// ProfileNavigationTest.java
 package tests.profile;
 
+import helpers.Endpoints;
 import helpers.UserApiHelper;
 import helpers.UserData;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.Response;
-import models.Browsers;
 import models.CourierModel;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import pages.*;
+import pages.LoginPage;
+import pages.MainPage;
+import pages.ProfilePage;
 import tests.BaseUITest;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -20,8 +21,8 @@ import static org.hamcrest.Matchers.equalTo;
 
 @RunWith(Parameterized.class)
 public class ProfileNavigationTest extends BaseUITest {
-
     private final String browser;
+
     private String email;
     private String password;
     private String name;
@@ -33,7 +34,10 @@ public class ProfileNavigationTest extends BaseUITest {
 
     @Parameterized.Parameters(name = "Browser: {0}")
     public static Object[][] getBrowsers() {
-        return Browsers.getBrowserData().toArray(new Object[0][]);
+        return new Object[][]{
+                {"chrome"},
+                {"yandex"}
+        };
     }
 
     @Override
@@ -59,14 +63,11 @@ public class ProfileNavigationTest extends BaseUITest {
         }
     }
 
-    private void loginThroughUI() {
-        MainPage mainPage = new MainPage(driver);
-        mainPage.clickPersonalAccount();
-
+    protected void loginThroughUI() {
+        driver.get(Endpoints.LOGIN_URL);
         LoginPage loginPage = new LoginPage(driver);
-        loginPage.enterEmail(email);
-        loginPage.enterPassword(password);
-        loginPage.clickLoginButton();
+        loginPage.login(email, password);
+        loginPage.waitUntilRedirectToMain();
     }
 
     @Test
@@ -75,7 +76,7 @@ public class ProfileNavigationTest extends BaseUITest {
         loginThroughUI();
         MainPage mainPage = new MainPage(driver);
         mainPage.clickPersonalAccount();
-        assertThat(driver.getCurrentUrl(), equalTo("https://stellarburgers.nomoreparties.site/account/profile"));
+        assertThat(driver.getCurrentUrl(), equalTo(Endpoints.PROFILE_URL));
     }
 
     @Test
@@ -86,7 +87,7 @@ public class ProfileNavigationTest extends BaseUITest {
         mainPage.clickPersonalAccount();
         ProfilePage profilePage = new ProfilePage(driver);
         profilePage.clickLogoutButton();
-        assertThat(driver.getCurrentUrl(), equalTo("https://stellarburgers.nomoreparties.site/login"));
+        assertThat(driver.getCurrentUrl(), equalTo(Endpoints.LOGIN_URL));
     }
 
     @Test
@@ -95,7 +96,7 @@ public class ProfileNavigationTest extends BaseUITest {
         loginThroughUI();
         MainPage mainPage = new MainPage(driver);
         mainPage.clickLogo();
-        assertThat(driver.getCurrentUrl(), equalTo("https://stellarburgers.nomoreparties.site/"));
+        assertThat(driver.getCurrentUrl(), equalTo(Endpoints.BASE_URL));
     }
 
     @Test
@@ -104,6 +105,6 @@ public class ProfileNavigationTest extends BaseUITest {
         loginThroughUI();
         MainPage mainPage = new MainPage(driver);
         mainPage.clickConstructorButton();
-        assertThat(driver.getCurrentUrl(), equalTo("https://stellarburgers.nomoreparties.site/"));
+        assertThat(driver.getCurrentUrl(), equalTo(Endpoints.BASE_URL));
     }
 }

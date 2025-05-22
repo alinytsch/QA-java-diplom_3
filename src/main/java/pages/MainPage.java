@@ -1,9 +1,14 @@
 package pages;
 
+import helpers.Endpoints;
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.time.Duration;
 
 public class MainPage {
     private final WebDriver driver;
@@ -29,6 +34,11 @@ public class MainPage {
     @Step("Переход в личный кабинет")
     public void clickPersonalAccount() {
         driver.findElement(personalAccountButton).click();
+
+        new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.or(
+                ExpectedConditions.urlToBe(Endpoints.PROFILE_URL),
+                ExpectedConditions.urlToBe(Endpoints.LOGIN_URL)
+        ));
     }
 
     @Step("Переход в конструктор через кнопку")

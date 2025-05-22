@@ -1,12 +1,9 @@
 package tests.constructor;
 
-import io.qameta.allure.junit4.DisplayName;
-import models.Browsers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import pages.ConstructorPage;
-import pages.MainPage;
 import tests.BaseUITest;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -14,7 +11,6 @@ import static org.hamcrest.Matchers.equalTo;
 
 @RunWith(Parameterized.class)
 public class ConstructorSectionTest extends BaseUITest {
-
     private final String browser;
 
     public ConstructorSectionTest(String browser) {
@@ -23,7 +19,10 @@ public class ConstructorSectionTest extends BaseUITest {
 
     @Parameterized.Parameters(name = "Browser: {0}")
     public static Object[][] getBrowsers() {
-        return Browsers.getBrowserData().toArray(new Object[0][]);
+        return new Object[][] {
+                {"chrome"},
+                {"yandex"}
+        };
     }
 
     @Override
@@ -32,33 +31,26 @@ public class ConstructorSectionTest extends BaseUITest {
     }
 
     @Test
-    @DisplayName("Переход на вкладку 'Булки'")
-    public void openBunsTab() {
-        MainPage mainPage = new MainPage(driver);
-        mainPage.clickFillingsTab(); // сбросить фокус
-        mainPage.clickBunsTab();
-
-        ConstructorPage page = new ConstructorPage(driver);
-        assertThat(page.getActiveTabText(), equalTo("Булки"));
+    public void switchingToFillingsTabWorks() {
+        ConstructorPage constructorPage = new ConstructorPage(driver);
+        constructorPage.openFillingsTab();
+        String activeTab = constructorPage.getActiveTabText();
+        assertThat(activeTab, equalTo("Начинки"));
     }
 
     @Test
-    @DisplayName("Переход на вкладку 'Соусы'")
-    public void openSaucesTab() {
-        MainPage mainPage = new MainPage(driver);
-        mainPage.clickSaucesTab();
-
-        ConstructorPage page = new ConstructorPage(driver);
-        assertThat(page.getActiveTabText(), equalTo("Соусы"));
+    public void switchingToSaucesTabWorks() {
+        ConstructorPage constructorPage = new ConstructorPage(driver);
+        constructorPage.openSaucesTab();
+        String activeTab = constructorPage.getActiveTabText();
+        assertThat(activeTab, equalTo("Соусы"));
     }
 
     @Test
-    @DisplayName("Переход на вкладку 'Начинки'")
-    public void openFillingsTab() {
-        MainPage mainPage = new MainPage(driver);
-        mainPage.clickFillingsTab();
-
-        ConstructorPage page = new ConstructorPage(driver);
-        assertThat(page.getActiveTabText(), equalTo("Начинки"));
+    public void switchingToBunsTabWorks() {
+        ConstructorPage constructorPage = new ConstructorPage(driver);
+        constructorPage.openBunsTab();
+        String activeTab = constructorPage.getActiveTabText();
+        assertThat(activeTab, equalTo("Булки"));
     }
 }

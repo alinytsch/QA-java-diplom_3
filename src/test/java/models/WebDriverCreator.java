@@ -1,10 +1,12 @@
 package models;
 
+
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
 public class WebDriverCreator {
+
 
     public static WebDriver createWebDriver(String browser) {
         if (browser == null) {
@@ -27,11 +29,10 @@ public class WebDriverCreator {
 
     private static WebDriver createYandexDriver() {
         System.setProperty("webdriver.chrome.driver",
-                "/Users/alinytsch/WebDriver/bin/chrome-mac-arm64/chromedriver-mac-arm64/chromedriver");
-
+                String.format("%s/%s", System.getenv("WEBDRIVERS"),
+                        System.getenv("YANDEX_BROWSER_DRIVER_FILENAME")));
         ChromeOptions options = new ChromeOptions();
-        options.setBinary("/Applications/Yandex.app/Contents/MacOS/Yandex");
-
+        options.setBinary(System.getenv("YANDEX_BROWSER_PATH"));
         return new ChromeDriver(options);
     }
 }

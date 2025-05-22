@@ -6,8 +6,6 @@ import models.Browsers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import pages.LoginPage;
 import pages.MainPage;
 import pages.RegisterPage;
@@ -20,6 +18,9 @@ import static org.hamcrest.Matchers.equalTo;
 
 @RunWith(Parameterized.class)
 public class RegistrationTest extends BaseUITest {
+
+    private static final String LOGIN_PAGE_URL = "https://stellarburgers.nomoreparties.site/login";
+    private static final String ERROR_SHORT_PASSWORD = "Некорректный пароль";
 
     private final String browser;
 
@@ -52,16 +53,16 @@ public class RegistrationTest extends BaseUITest {
         String email = UserData.randomEmail();
         String password = "123456"; // валидный пароль
 
-        registerPage.enterName(name);
-        registerPage.enterEmail(email);
-        registerPage.enterPassword(password);
-        registerPage.clickRegisterButton();
+        registerPage.waitForPageLoad()
+                .enterName(name)
+                .enterEmail(email)
+                .enterPassword(password)
+                .clickRegisterButton();
 
-        // Ждем редирект на страницу логина
-        new WebDriverWait(driver, Duration.ofSeconds(5))
-                .until(ExpectedConditions.urlToBe("https://stellarburgers.nomoreparties.site/login"));
+        registerPage.waitUntilUrlIs(LOGIN_PAGE_URL);
 
-        assertThat(driver.getCurrentUrl(), equalTo("https://stellarburgers.nomoreparties.site/login"));
+        assertThat("Проверяем URL после успешной регистрации",
+                driver.getCurrentUrl(), equalTo(LOGIN_PAGE_URL));
     }
 
     @Test
@@ -74,15 +75,20 @@ public class RegistrationTest extends BaseUITest {
         loginPage.clickRegisterLink();
 
         RegisterPage registerPage = new RegisterPage(driver);
+
         String name = UserData.randomName();
         String email = UserData.randomEmail();
-        String password = "123"; // короткий пароль
+        String shortPassword = "123"; // короткий пароль
 
-        registerPage.enterName(name);
-        registerPage.enterEmail(email);
-        registerPage.enterPassword(password);
-        registerPage.clickRegisterButton();
+        registerPage.waitForPageLoad()
+                .enterName(name)
+                .enterEmail(email)
+                .enterPassword(shortPassword)
+                .clickRegisterButton();
 
-        assertThat(registerPage.getErrorText(), equalTo("Некорректный пароль"));
+        registerPage.waitForErrorVisible();
+
+        assertThat("Проверяем текст ошибки при коротком пароле",
+                registerPage.getErrorText(), equalTo(ERROR_SHORT_PASSWORD));
     }
 }
